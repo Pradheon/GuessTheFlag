@@ -26,6 +26,8 @@ struct ContentView: View {
     @State private var nQuestionsAsked = 0
     @State var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State var correctAnswer = Int.random(in: 0...2)
+    @State private var animationOpacity = 1.0
+    @State private var animationCount = 0.0
     
     var body: some View {
         ZStack {
@@ -54,10 +56,15 @@ struct ContentView: View {
                     }
                     ForEach(0..<3) { number in
                         Button {
-                            flagTapped(number)
+                            withAnimation {
+                                flagTapped(number)
+                            }
                         } label: {
                             FlagImage(imgFileName: countries[number])
                         }
+                        .rotation3DEffect(number == correctAnswer ? .degrees(animationCount) : .degrees(0), axis: (x: 0, y: 1, z: 0))
+                        .rotation3DEffect(number != correctAnswer ? .degrees(animationCount) : .degrees(0), axis: (x: 2, y: 0, z: 0))
+                        .opacity(number != correctAnswer ? animationOpacity : 1.0)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -104,9 +111,19 @@ struct ContentView: View {
         if number == correctAnswer {
             scoreTitle = "Correct!"
             score += 1
+            withAnimation(.easeInOut(duration: 1.0)) {
+                animationCount += 360
+            }
         } else {
             scoreTitle = "Wrong! That's the flag of \(countries[number])"
             score -= 1
+            withAnimation(.easeInOut) {
+                animationCount += 360
+            }
+        }
+        
+        withAnimation {
+            animationOpacity = 0.25
         }
         
         nQuestionsAsked += 1
@@ -119,6 +136,7 @@ struct ContentView: View {
         } else {
             countries.shuffle()
             correctAnswer = Int.random(in: 0...2)
+            animationOpacity = 1.0
         }
     }
     
