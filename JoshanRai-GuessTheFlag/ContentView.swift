@@ -76,6 +76,7 @@ struct ContentView: View {
                             }
                         } label: {
                             FlagImage(imgFileName: countries[number])
+                                .accessibilityLabel(labels[countries[number], default: "Unknown flag"])
                         }
                         // Day 34 - Challege 1 - rotate 360 on y-axis
                         .rotation3DEffect(number == correctAnswer ? .degrees(animationCount) : .degrees(0), axis: (x: 0, y: 1, z: 0))
@@ -83,7 +84,6 @@ struct ContentView: View {
                         .rotation3DEffect(number != correctAnswer ? .degrees(animationCount) : .degrees(0), axis: (x: 2, y: 0, z: 0))
                         // Day 34 - Challege 2 - opacity to 25%
                         .opacity(number != correctAnswer ? animationOpacity : 1.0)
-                        .accessibilityLabel(labels[countries[number], default: "Unknown flag"])
                     }
                 }
                 .frame(maxWidth: .infinity)
